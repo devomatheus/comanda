@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela do Caixa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-success">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Tela do Caixa</span>
+            <a href="/" class="btn btn-light">Voltar</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Gerenciar Pratos -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Gerenciar Pratos</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <input type="text" id="pratoDescricao" class="form-control" placeholder="Descrição do prato">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" id="pratoValor" class="form-control" placeholder="Valor" step="0.01" min="0">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary" onclick="criarPrato()">Criar Prato</button>
+                    </div>
+                </div>
+                <div id="pratosList"></div>
+            </div>
+        </div>
+
+        <!-- Gerenciar Mesas -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Gerenciar Mesas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <input type="number" id="mesaNumero" class="form-control" placeholder="Número da mesa" min="1">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary" onclick="criarMesa()">Criar Mesa</button>
+                    </div>
+                </div>
+                <div id="mesasList"></div>
+            </div>
+        </div>
+
+        <!-- Mesas Abertas -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Mesas Abertas</h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="carregarMesasAbertas()">Atualizar</button>
+            </div>
+            <div class="card-body">
+                <div id="mesasAbertasList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalhes e fechar comanda -->
+    <div class="modal fade" id="comandaModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Comanda - Mesa <span id="modalMesaNumero"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="comandaDetalhes"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-success" onclick="fecharComanda()">Encerrar Mesa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/caixa.js"></script>
+</body>
+</html>
+

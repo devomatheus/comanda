@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela do Garçom</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Tela do Garçom</span>
+            <a href="/" class="btn btn-light">Voltar</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Abrir Comanda -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Abrir Comanda</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Selecione a Mesa</label>
+                        <select id="mesaSelect" class="form-select">
+                            <option value="">Selecione uma mesa</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <button class="btn btn-primary" onclick="abrirComanda()">Abrir Comanda</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Adicionar Pedido -->
+        <div class="card mb-4" id="pedidoCard" style="display: none;">
+            <div class="card-header">
+                <h5>Adicionar Pedido</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">Prato</label>
+                        <select id="pratoSelect" class="form-select">
+                            <option value="">Selecione um prato</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Quantidade</label>
+                        <input type="number" id="quantidadeInput" class="form-control" value="1" min="1">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Observações</label>
+                        <input type="text" id="observacoesInput" class="form-control" placeholder="Ex: sem cebola">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-success" onclick="adicionarPedido()">Adicionar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pedidos da Mesa -->
+        <div class="card" id="pedidosCard" style="display: none;">
+            <div class="card-header">
+                <h5>Pedidos da Mesa <span id="numeroMesa"></span></h5>
+            </div>
+            <div class="card-body">
+                <div id="pedidosList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/garcom.js"></script>
+</body>
+</html>
+

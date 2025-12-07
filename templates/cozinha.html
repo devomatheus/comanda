@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela da Cozinha</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .pedido-feito {
+            opacity: 0.6;
+            background-color: #f0f0f0 !important;
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-warning">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Tela da Cozinha</span>
+            <a href="/" class="btn btn-light">Voltar</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Pedidos em Andamento</h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="carregarPedidos()">Atualizar</button>
+            </div>
+            <div class="card-body">
+                <div id="pedidosList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/cozinha.js"></script>
+</body>
+</html>
+
