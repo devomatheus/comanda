@@ -5,11 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Comanda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .ip-info {
+            background-color: #f8f9fa;
+            border-left: 4px solid #0d6efd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .ip-link {
+            font-family: monospace;
+            color: #0d6efd;
+            word-break: break-all;
+        }
+        .copy-btn {
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-10">
+                <!-- Informações de Acesso -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Informações de Acesso</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="serverInfo" class="ip-info">
+                            <p class="mb-2"><strong>Carregando informações do servidor...</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menu Principal -->
                 <div class="card">
                     <div class="card-header bg-primary text-white">
                         <h2 class="text-center mb-0">Sistema de Comanda</h2>
@@ -32,6 +63,99 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Carrega informações do servidor ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarInfoServidor();
+        });
+
+        async function carregarInfoServidor() {
+            try {
+                const response = await fetch('/api/server/info');
+                const info = await response.json();
+                exibirInfoServidor(info);
+            } catch (error) {
+                console.error('Erro ao carregar informações do servidor:', error);
+                document.getElementById('serverInfo').innerHTML = 
+                    '<p class="text-danger">Erro ao carregar informações do servidor</p>';
+            }
+        }
+
+        function exibirInfoServidor(info) {
+            const container = document.getElementById('serverInfo');
+            const currentHost = window.location.hostname;
+            const currentPort = window.location.port || '5000';
+            const protocol = window.location.protocol;
+            
+            let html = '<p class="mb-2"><strong>Endereços para Acesso Externo:</strong></p>';
+            
+            // Lista de IPs disponíveis
+            const ipList = info.ip_list && info.ip_list.length > 0 ? info.ip_list : [info.local_ip];
+            
+            if (ipList.length > 0) {
+                html += '<ul class="list-unstyled mb-3">';
+                ipList.forEach(ip => {
+                    if (ip !== '127.0.0.1') {
+                        const baseUrl = `${protocol}//${ip}:${currentPort}`;
+                        html += `
+                            <li class="mb-2">
+                                <span class="ip-link">${baseUrl}</span>
+                                <button class="btn btn-sm btn-outline-secondary copy-btn ms-2" onclick="copiarTexto('${baseUrl}')" title="Copiar">
+                                    📋 Copiar
+                                </button>
+                            </li>
+                        `;
+                    }
+                });
+                html += '</ul>';
+            }
+            
+            // Acesso local
+            html += `
+                <p class="mb-1"><strong>Acesso Local:</strong></p>
+                <p class="mb-3">
+                    <span class="ip-link">${protocol}//localhost:${currentPort}</span>
+                    <button class="btn btn-sm btn-outline-secondary copy-btn ms-2" onclick="copiarTexto('${protocol}//localhost:${currentPort}')" title="Copiar">
+                        📋 Copiar
+                    </button>
+                </p>
+            `;
+            
+            // Informações adicionais
+            html += `
+                <hr>
+                <small class="text-muted">
+                    <strong>Hostname:</strong> ${info.hostname || 'N/A'}<br>
+                    <strong>IP Principal:</strong> ${info.local_ip || 'N/A'}<br>
+                    <strong>Porta:</strong> ${currentPort}
+                </small>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function copiarTexto(texto) {
+            navigator.clipboard.writeText(texto).then(function() {
+                // Feedback visual
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copiado!';
+                btn.classList.remove('btn-outline-secondary');
+                btn.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-secondary');
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Erro ao copiar:', err);
+                alert('Erro ao copiar texto');
+            });
+        }
+    </script>
 </body>
 </html>
 

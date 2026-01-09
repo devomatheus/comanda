@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 import database
 import sqlite3
+import socket
 from datetime import datetime
 
 app = Flask(__name__)
@@ -252,6 +253,86 @@ def fechar_comanda(comanda_id):
         'pedidos': [dict(pedido) for pedido in pedidos]
     })
 
+@app.route('/api/comandas/fechadas', methods=['GET'])
+def listar_comandas_fechadas():
+    """Lista todas as comandas fechadas com seus pedidos"""
+    conn = database.get_db()
+    
+    # Busca todas as comandas fechadas
+    comandas = conn.execute('''
+        SELECT c.*, m.numero as mesa_numero
+        FROM comandas c
+        JOIN mesas m ON c.mesa_id = m.id
+        WHERE c.aberta = 0
+        ORDER BY c.data_fechamento DESC
+    ''').fetchall()
+    
+    resultado = []
+    for comanda in comandas:
+        # Busca os pedidos de cada comanda
+        pedidos = conn.execute('''
+            SELECT p.*, pr.descricao as prato_descricao, pr.valor as prato_valor
+            FROM pedidos p
+            JOIN pratos pr ON p.prato_id = pr.id
+            WHERE p.comanda_id = ?
+            ORDER BY p.data_pedido
+        ''', (comanda['id'],)).fetchall()
+        
+        resultado.append({
+            'comanda': dict(comanda),
+            'mesa_numero': comanda['mesa_numero'],
+            'pedidos': [dict(pedido) for pedido in pedidos]
+        })
+    
+    conn.close()
+    return jsonify(resultado)
+
+@app.route('/api/server/info', methods=['GET'])
+def server_info():
+    """Retorna informações do servidor (IP, hostname)"""
+    try:
+        # Obtém o hostname
+        hostname = socket.gethostname()
+        
+        # Obtém o IP local
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            # Conecta a um endereço remoto (não precisa estar acessível)
+            s.connect(('8.8.8.8', 80))
+            local_ip = s.getsockname()[0]
+        except Exception:
+            local_ip = '127.0.0.1'
+        finally:
+            s.close()
+        
+        # Obtém todos os IPs da máquina
+        ip_list = []
+        try:
+            for ip in socket.gethostbyname_ex(hostname)[2]:
+                if not ip.startswith('127.'):
+                    ip_list.append(ip)
+        except:
+            pass
+        
+        # Se não encontrou IPs, usa o local_ip
+        if not ip_list and local_ip != '127.0.0.1':
+            ip_list = [local_ip]
+        
+        return jsonify({
+            'hostname': hostname,
+            'local_ip': local_ip,
+            'ip_list': ip_list,
+            'port': 5000
+        })
+    except Exception as e:
+        return jsonify({
+            'hostname': 'localhost',
+            'local_ip': '127.0.0.1',
+            'ip_list': ['127.0.0.1'],
+            'port': 5000,
+            'error': str(e)
+        })
+
 # ========== ROTAS DE TELAS ==========
 
 @app.route('/')
@@ -283,6 +364,11 @@ def cadastro_pratos():
 def cadastro_mesas():
     """Tela de cadastro de mesas"""
     return render_template('cadastro_mesas.html')
+
+@app.route('/historico')
+def historico():
+    """Tela de histórico de mesas encerradas"""
+    return render_template('historico.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
